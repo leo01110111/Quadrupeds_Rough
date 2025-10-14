@@ -135,7 +135,7 @@ class ObservationsCfg:
             func=mdp.height_scan,
             params={"sensor_cfg": SceneEntityCfg("height_scanner")},
             noise=Unoise(n_min=-0.1, n_max=0.1),
-            clip=(-1.0, 1.0),
+            clip=(-1.0, 1.0) , 
         )"""
 
         def __post_init__(self):
