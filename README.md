@@ -1,3 +1,8 @@
+python scripts/rsl_rl/play.py --task Isaac-Velocity-Rough-Unitree-Go2-Play-v0 --num_envs 5 --checkpoint /home/leo/Documents/Quadrupeds_Rough/logs/rsl_rl/unitree_go2_rough/tests/model_900.pt
+
+python scripts/rsl_rl/train.py --task Isaac-Velocity-Rough-Unitree-Go2-v0 --num_envs 5 --resume --experiment_name rsl_rl/unitree_go2_rough --load_run tests --checkpoint model_900.pt
+
+
 # Template for Isaac Lab Projects
 
 ## Overview
