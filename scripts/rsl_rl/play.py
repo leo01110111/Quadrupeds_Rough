@@ -10,6 +10,8 @@
 import argparse
 import sys
 
+from logger import EnvironmentLogger
+
 from isaaclab.app import AppLauncher
 
 # local imports
@@ -160,6 +162,16 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
 
     dt = env.unwrapped.step_dt
 
+    obs_labels = ["base_lin_vel(3)", "base_ang_vel(3)", "proj_grav(3)", "vel_cmd(3)", "joint_pos(12)", "joint_vel(12)", "action(12)"]
+    act_labels = ["joint_pos(12)"]
+    
+    # Create logger instance
+    logger = EnvironmentLogger(
+        observation_labels=obs_labels,
+        action_labels=act_labels,
+        filename="data.csv"
+    )
+
     # reset environment
     obs, _ = env.get_observations()
     timestep = 0
@@ -170,6 +182,7 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
         with torch.inference_mode():
             # agent stepping
             actions = policy(obs)
+            logger.log_step(obs, actions)
             # env stepping
             obs, _, _, _ = env.step(actions)
         if args_cli.video:

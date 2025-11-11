@@ -27,7 +27,7 @@ class UnitreeGo2RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
         self.scene.terrain.terrain_generator.sub_terrains["random_rough"].noise_step = 0.01
 
         # reduce action scale
-        #self.actions.joint_pos.scale = 0.25
+        self.actions.joint_pos.scale = 0.25
         #commented out to match quad sdk
 
         # event
