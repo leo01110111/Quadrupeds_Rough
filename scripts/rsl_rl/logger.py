@@ -134,18 +134,18 @@ class EnvironmentLogger:
         Labels are repeated with values, 3 elements per row, separated by newlines.
         
         Args:
-            observation (torch.Tensor): Observation tensor of shape (x, 1) on GPU
-            action (torch.Tensor): Action tensor of shape (x, 1) on GPU
+            observation (torch.Tensor): Observation tensor of shape (1, x) on GPU
+            action (torch.Tensor): Action tensor of shape (1, x) on GPU
         """
-        # Validate shapes - should be (x, 1)
-        assert observation.dim() == 2 and observation.shape[1] == 1, \
-            f"Observation must have shape (x, 1), got {observation.shape}"
-        assert action.dim() == 2 and action.shape[1] == 1, \
-            f"Action must have shape (x, 1), got {action.shape}"
+        # Validate shapes - should be (1, x)
+        assert observation.dim() == 2 and observation.shape[0] == 1, \
+            f"Observation must have shape (1, x), got {observation.shape}"
+        assert action.dim() == 2 and action.shape[0] == 1, \
+            f"Action must have shape (1, x), got {action.shape}"
         
         # Extract dimensions
-        obs_dim = observation.shape[0]
-        act_dim = action.shape[0]
+        obs_dim = observation.shape[1]
+        act_dim = action.shape[1]
         
         # Validate total dimensions match group sizes
         obs_total = sum(size for _, size in self.obs_groups)
@@ -156,8 +156,8 @@ class EnvironmentLogger:
             f"Action dimension mismatch: got {act_dim}, expected {act_total}"
         
         # Convert GPU tensors to CPU and then to list, rounded to 2 decimal places
-        obs_list = [round(x, 2) for x in observation.squeeze(1).detach().cpu().numpy().tolist()]
-        act_list = [round(x, 2) for x in action.squeeze(1).detach().cpu().numpy().tolist()]
+        obs_list = [round(x, 2) for x in observation.squeeze(0).detach().cpu().numpy().tolist()]
+        act_list = [round(x, 2) for x in action.squeeze(0).detach().cpu().numpy().tolist()]
         
         # Format observations and actions with labels and newlines
         obs_data = self._format_grouped_data_with_labels(obs_list, self.obs_groups)
@@ -212,8 +212,8 @@ if __name__ == "__main__":
     # Total obs: 3+3+3+3+12+12+12 = 48
     # Total act: 12
     for step in range(10):
-        obs = torch.randn(48, 1, device=device)
-        act = torch.randn(12, 1, device=device)
+        obs = torch.randn(1, 48, device=device)
+        act = torch.randn(1, 12, device=device)
         logger.log_step(obs, act)
     
     print(f"Logging complete! Total steps: {logger.get_step_count()}")
