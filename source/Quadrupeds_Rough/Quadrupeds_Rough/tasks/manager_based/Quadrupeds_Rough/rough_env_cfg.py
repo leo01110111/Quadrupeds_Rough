@@ -6,6 +6,7 @@
 from isaaclab.utils import configclass
 
 from .velocity_env_cfg import LocomotionVelocityRoughEnvCfg
+from .env_cfg import RobotEnvCfg
 
 ##
 # Pre-defined configs
@@ -63,21 +64,15 @@ class UnitreeGo2RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
 
 
 @configclass
-class UnitreeGo2RoughEnvCfg_PLAY(UnitreeGo2RoughEnvCfg):
+class UnitreeGo2RoughEnvCfg_PLAY(RobotEnvCfg):
     def __post_init__(self):
         # post init of parent
         super().__post_init__()
 
         # make a smaller scene for play
-        self.scene.num_envs = 50
-        self.scene.env_spacing = 2.5
+        self.scene.num_envs = 6
         # spawn the robot randomly in the grid (instead of their terrain levels)
-        self.scene.terrain.max_init_terrain_level = None
-        # reduce the number of terrains to save memory
-        if self.scene.terrain.terrain_generator is not None:
-            self.scene.terrain.terrain_generator.num_rows = 5
-            self.scene.terrain.terrain_generator.num_cols = 5
-            self.scene.terrain.terrain_generator.curriculum = False
+        self.scene.terrain.max_init_terrain_level = 10
 
         # disable randomization for play
         self.observations.policy.enable_corruption = False

@@ -166,11 +166,11 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
     act_labels = ["joint_pos(12)"]
     
     # Create logger instance
-    logger = EnvironmentLogger(
-        observation_labels=obs_labels,
-        action_labels=act_labels,
-        filename="data.csv"
-    )
+    # logger = EnvironmentLogger(
+    #     observation_labels=obs_labels,
+    #     action_labels=act_labels,
+    #     filename="data.csv"
+    # )
 
     # reset environment
     obs, _ = env.get_observations()
@@ -182,7 +182,7 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
         with torch.inference_mode():
             # agent stepping
             actions = policy(obs)
-            logger.log_step(obs, actions)
+            #logger.log_step(obs, actions)
             # env stepping
             obs, _, _, _ = env.step(actions)
         if args_cli.video:
