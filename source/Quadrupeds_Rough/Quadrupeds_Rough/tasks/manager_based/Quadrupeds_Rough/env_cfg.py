@@ -63,14 +63,14 @@ class RobotSceneCfg(InteractiveSceneCfg):
     robot: ArticulationCfg = UNITREE_GO2_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
 
     # sensors
-    # height_scanner = RayCasterCfg(
-    #     prim_path="{ENV_REGEX_NS}/Robot/base",
-    #     offset=RayCasterCfg.OffsetCfg(pos=(0.0, 0.0, 20.0)),
-    #     ray_alignment="yaw",
-    #     pattern_cfg=patterns.GridPatternCfg(resolution=0.1, size=[1.6, 1.0]),
-    #     debug_vis=False,
-    #     mesh_prim_paths=["/World/ground"],
-    # )
+    height_scanner = RayCasterCfg(
+         prim_path="{ENV_REGEX_NS}/Robot/base",
+         offset=RayCasterCfg.OffsetCfg(pos=(0.0, 0.0, 20.0)),
+         ray_alignment="yaw",
+         pattern_cfg=patterns.GridPatternCfg(resolution=0.1, size=[1.6, 1.0]),
+         debug_vis=False,
+         mesh_prim_paths=["/World/ground"],
+     )
     contact_forces = ContactSensorCfg(prim_path="{ENV_REGEX_NS}/Robot/.*", history_length=3, track_air_time=True)
     # lights
     sky_light = AssetBaseCfg(
@@ -202,7 +202,7 @@ class ObservationsCfg:
         last_action = ObsTerm(func=mdp.last_action, clip=(-100, 100))
 
         def __post_init__(self):
-            # self.history_length = 5
+            self.history_length = 50
             self.enable_corruption = True
             self.concatenate_terms = True
 
@@ -223,13 +223,13 @@ class ObservationsCfg:
         joint_vel_rel = ObsTerm(func=mdp.joint_vel_rel, scale=0.05, clip=(-100, 100))
         joint_effort = ObsTerm(func=mdp.joint_effort, scale=0.01, clip=(-100, 100))
         last_action = ObsTerm(func=mdp.last_action, clip=(-100, 100))
-        # height_scanner = ObsTerm(func=mdp.height_scan,
-        #     params={"sensor_cfg": SceneEntityCfg("height_scanner")},
-        #     clip=(-1.0, 5.0),
-        # )
+        height_scanner = ObsTerm(func=mdp.height_scan,
+             params={"sensor_cfg": SceneEntityCfg("height_scanner")},
+             clip=(-1.0, 5.0),
+        )
 
-        # def __post_init__(self):
-        #     self.history_length = 5
+        def __post_init__(self):
+             self.history_length = 50
 
     # privileged observations
     critic: CriticCfg = CriticCfg()
@@ -363,7 +363,7 @@ class RobotEnvCfg(ManagerBasedRLEnvCfg):
         # update sensor update periods
         # we tick all the sensors based on the smallest update period (physics update period)
         self.scene.contact_forces.update_period = self.sim.dt
-        #self.scene.height_scanner.update_period = self.decimation * self.sim.dt
+        self.scene.height_scanner.update_period = self.decimation * self.sim.dt
 
         # check if terrain levels curriculum is enabled - if so, enable curriculum for terrain generator
         # this generates terrains with increasing difficulty and is useful for training
